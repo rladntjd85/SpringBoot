@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -33,12 +35,25 @@ public class BoardController {
     @Value("${file.upload.directory}")
     String uploadFileDir;
 
-    @RequestMapping("/list") //게시판 리스트 화면 호출  
-    private String boardList(Model model) throws Exception{
+//    @RequestMapping("/list") //게시판 리스트 화면 호출  
+//    private String boardList(Model model) throws Exception{
+//        
+//        model.addAttribute("list", mBoardService.boardListService());
+//        
+//        return "list"; //생성할 jsp
+//    }
+    
+    // currentPage 변수를 받는데 없을 경우 default 값을 1로 받음
+    @RequestMapping("/list")
+    public String boardList(Model model, @RequestParam(value = "currentPage", required = false, defaultValue = "1") int currentPage) throws Exception {
+        Map<String, Object> map = mBoardService.boardList(currentPage);
+        model.addAttribute("boardList", map.get("list"));
+        model.addAttribute("currentPage", map.get("currentPage"));
+        model.addAttribute("lastPage", map.get("lastPage"));
+        model.addAttribute("startPageNum", map.get("startPageNum"));
+        model.addAttribute("lastPageNum", map.get("lastPageNum"));
         
-        model.addAttribute("list", mBoardService.boardListService());
-        
-        return "list"; //생성할 jsp
+        return "boardList";
     }
     
     @RequestMapping("/detail/{bno}") 

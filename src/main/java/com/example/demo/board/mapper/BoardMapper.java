@@ -1,7 +1,8 @@
 package com.example.demo.board.mapper;
  
 import java.util.List;
- 
+import java.util.Map;
+
 import org.springframework.stereotype.Repository;
  
 import com.example.demo.board.domain.BoardVO;
@@ -13,7 +14,7 @@ public interface BoardMapper {
     public int boardCount() throws Exception;
     
     //게시글 목록  
-    public List<BoardVO> boardList() throws Exception;
+    public List<BoardVO> boardList(Map<String, Integer> map) throws Exception;
     
     //게시글 상세
     public BoardVO boardDetail(int bno) throws Exception;

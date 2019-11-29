@@ -35,8 +35,10 @@
             <input type="file" id="file" name="files">
           </div>
           
-          <button type="submit" class="btn btn-primary btn-sm" style="float:right;">작성</button>
-          
+          <div class="btn-group btn-group-sm" role="group" style="float:right;">
+          	<button type="submit" class="btn btn-primary btn-sm">작성</button>
+          	<button type="button" class="btn btn-primary btn-sm" onclick="location.href='/list'"> 목록 </button>
+          </div>
         </form>
     </div>
 </div> 
