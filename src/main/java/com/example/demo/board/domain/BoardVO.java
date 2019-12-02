@@ -3,7 +3,7 @@ package com.example.demo.board.domain;
 import java.util.Date;
 import com.example.demo.board.domain.ListPagingVo;
 
-public class BoardVO{
+public class BoardVO extends ListPagingVo{
 	
  	private int bno;
     private String subject;

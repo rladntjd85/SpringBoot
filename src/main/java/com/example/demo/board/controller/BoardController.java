@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -16,6 +17,8 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -35,27 +38,46 @@ public class BoardController {
     @Value("${file.upload.directory}")
     String uploadFileDir;
 
-//    @RequestMapping("/list") //게시판 리스트 화면 호출  
-//    private String boardList(Model model) throws Exception{
-//        
-//        model.addAttribute("list", mBoardService.boardListService());
-//        
-//        return "list"; //생성할 jsp
-//    }
-    
-    // currentPage 변수를 받는데 없을 경우 default 값을 1로 받음
     @RequestMapping("/list")
-    public String boardList(Model model, @RequestParam(value = "currentPage", required = false, defaultValue = "1") int currentPage) throws Exception {
-        Map<String, Object> map = mBoardService.boardList(currentPage);
-        model.addAttribute("boardList", map.get("list"));
-        model.addAttribute("currentPage", map.get("currentPage"));
-        model.addAttribute("lastPage", map.get("lastPage"));
-        model.addAttribute("startPageNum", map.get("startPageNum"));
-        model.addAttribute("lastPageNum", map.get("lastPageNum"));
+    public String boardList(HttpServletRequest req, ModelMap modelMap, @ModelAttribute("boardSearchVO") BoardVO boardSearchVO) throws Exception {
+//    String jspPath =req.getRequestURI();
         
+    ///////paging : S//////////////////////////////
+     
+    int pageSize = boardSearchVO.getPageSize();// 한페이지에 나오는 게시물 개수
+    int pageIndex = boardSearchVO.getPageIndex(); //현재 선택한 페이지 number
+    int pageGroupSize = boardSearchVO.getPageGroupSize(); // 페이지 번호가 몇개 나오느냐 개수
+    int startRow = (pageIndex - 1) * pageSize + 1;// 한 페이지의 시작글 번호 
+    if(startRow == 1) { startRow = 0;}
+    int endRow =  pageSize;// 한 페이지의 마지막 글번호
+    
+    System.out.println("startRow============" + startRow);
+    System.out.println("============");
+    System.out.println("endRow============ "+endRow);
+    System.out.println("============");
+ 
+    boardSearchVO.setStartRow(startRow);
+    boardSearchVO.setEndRow(endRow);
+    int count = mBoardService.boardCount(boardSearchVO); //게시물 총 개수
+ 
+    int pageGroupCount = count / (pageSize * pageGroupSize) + (count % (pageSize * pageGroupSize) == 0 ? 0 : 1);
+    int nowPageGroup = (int) Math.ceil((double) pageIndex / pageGroupSize);
+     
+    List<BoardVO> boardList = mBoardService.boardList(boardSearchVO);
+     
+    modelMap.put("pageIndex", pageIndex);
+    modelMap.put("pageSize", pageSize);
+    modelMap.put("count", count);
+    modelMap.put("pageGroupSize", pageGroupSize);
+    modelMap.put("nowPageGroup", nowPageGroup);
+    modelMap.put("pageGroupCount", pageGroupCount);
+    modelMap.put("articleList", boardList);
+    modelMap.put("boardSearchVO", boardSearchVO);
+     
         return "boardList";
     }
-    
+
+
     @RequestMapping("/detail/{bno}") 
     private String boardDetail(@PathVariable int bno, Model model) throws Exception{
             

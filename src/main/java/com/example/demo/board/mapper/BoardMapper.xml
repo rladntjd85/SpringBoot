@@ -26,15 +26,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             , writer    
             , reg_date   
         FROM board 
- 		 <!-- 메서드 오버로딩으로 다른 메서드를 호출하기 위해 개인적으로 걸어놓은 조건문 -->
-        <if test="bno neq null and bno neq ''.toString()">
-            WHERE bno = #{bno}
-        </if>
  
         <!-- 다른 메서드 호출시 반영되지 않기위해 걸어놓은 조건문 -->
-        <if test="startRow neq lastPage"> 
+        <if test="startRow neq endRow"> 
              ORDER BY bno DESC
-            LIMIT #{startRow},#{rowPerPage}
+            LIMIT #{startRow},#{endRow}
         </if>
            
 	 </select>

@@ -1,68 +1,142 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
-<%@ taglib prefix="layoutTag" tagdir="/WEB-INF/tags"%>    
-<layoutTag:layout>    
+<%@ taglib prefix="layoutTag" tagdir="/WEB-INF/tags"%>
+<layoutTag:layout>
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<head>
+	<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+	<head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>List</title>
 </head>
 <body>
- 
-<div class="container">
-    <div class="col-xs-12" style="margin:15px auto;">
-        <label style="font-size:20px;"><span class="glyphicon glyphicon-list-alt"></span>게시글 목록</label>
-        <button class="btn btn-primary btn-sm" style="float:right;" onclick="location.href='/insert'">글쓰기</button>
-    </div>
-    
-    <div class="col-xs-12">
-        <table class="table table-hover">
-            <tr>
-                <th>No</th>
-                <th>Subject</th>
-                <th>Writer</th>
-                <th>Date</th>
-            </tr>
-              <c:forEach var="l" items="${boardList}">
-                  <tr onclick="location.href='/detail/${l.bno}'" id="mouse">
-                      <td>${l.bno}</td>
-                      <td>${l.subject}</td>
-                      <td>${l.writer}</td>
-                      <td>
-                        <fmt:formatDate value="${l.reg_date}" pattern="yyyy.MM.dd HH:mm:ss"/>
-                    </td>
-                  </tr>
-              </c:forEach>
-        </table>
-     </div>
-    <br/>
-    <div class="text-center">
-	    <span><a href="/list?currentPage=${currentPage=1}">처음</a></span>
-	    <!-- 현재 페이지가 1보다 클 경우 이전 href, 1보다 작은 경우 이전 text -->
-	   <%-- 	<c:choose>
-			 <c:when test="${currentPage != startPageNum}"><a href="/list?currentPage=${currentPage-1}">이전페이지</a></c:when>
-			 <c:otherwise>이전</c:otherwise>
-		</c:choose> --%>
-	    <!-- #number.sequence 인수로 지정한 2개의 수 범위에서 배열을 생성 -->
-	    <c:forEach var="num" begin="${startPageNum}" end="${lastPageNum}">
-	    	<c:choose>
-	    	<c:when test="${currentPage == num}">${num}</c:when>
-			<c:otherwise><a href="/list?currentPage=${num}">${num }</a></c:otherwise>
-			</c:choose>
-	    </c:forEach>
-	    <!-- 현재 페이지가 마지막페이지와 같지 않을 경우 다음 href, 같을 경우 다음 text -->
-	   <%--  <c:choose>
-			 <c:when test="${currentPage != lastPage}"><a href="/list?currentPage=${currentPage+1}">다음</a></c:when>
-			 <c:otherwise>다음</c:otherwise>
-		</c:choose> --%>
-		<span><a href="/list?currentPage=${lastPage}">마지막</a></span>
+	<div class="container">
+		<div class="col-xs-12" style="margin: 15px auto;">
+			<label style="font-size: 20px;"><span
+				class="glyphicon glyphicon-list-alt"></span>게시글 목록</label>
+			<button class="btn btn-primary btn-sm" style="float: right;"
+				onclick="location.href='/insert'">Writer</button>
+		</div>
+	<div class="search_div">
+		<form class="form" id="boardSearchVO" name="boardSearchVO">
+			<input type="hidden" id="pageIndex" name="pageIndex"
+				value="${boardSearchVO.pageIndex}" /> <input type="hidden"
+				id="pageSize" name="pageSize" value="${boardSearchVO.pageSize}" />
+			<input type="hidden" id="bno" name="bno"
+				value="${boardSearchVO.bno}" /> <input type="hidden"
+				id="blt_rsrc_sno" name="blt_rsrc_sno" value="0" />
+		</form>
 	</div>
-    <br/>
+
+	<h4>total : ${count}</h4>
+
+	<div class="col-xs-12">
+		<table class="table table-hover">
+			<!-- table-hover -->
+			<thead>
+				<tr>
+					<th class="col-xs-1">번호</th>
+					<th class="col-xs-6">제목</th>
+					<th class="col-xs-2">글쓴이(ID)</th>
+					<th class="col-xs-2">등록일</th>
+				</tr>
+			</thead>
+			<tbody>
+				<c:choose>
+					<c:when test="${not empty articleList}">
+						<c:forEach items="${articleList}" var="vo" varStatus="idx">
+
+							<tr class="${idx.count % 2 == 1 ? 'trOdd' : 'trEven'}"
+								onclick="location.href='/detail/${vo.bno}'" id="mouse">
+								<td><c:choose>
+										<c:when test="${count > pageSize}">
+											<!-- ex) count= 11, pageSize=10 -->
+											<c:out
+												value="${count - pageSize*(pageIndex-1) - idx.count +1}" />
+											<!-- 11,10,9,8.......... -->
+										</c:when>
+										<c:otherwise>
+											<c:out value="${count  - idx.count +1}" />
+										</c:otherwise>
+
+									</c:choose></td>
+
+								<td><c:out value="${vo.subject}" /></td>
+								<td><c:out value="${vo.writer}" /></td>
+								<td><fmt:formatDate value="${vo.reg_date}"
+								pattern="yyyy.MM.dd HH:mm:ss" /></td>
+							</tr>
+						</c:forEach>
+					</c:when>
+					<c:otherwise>
+						<tr>
+							<td colspan="7">조회된 자료가 없습니다.</td>
+						</tr>
+					</c:otherwise>
+				</c:choose>
+			</tbody>
+		</table>
+	</div>
+	<!-- Paging : S -->
+	
+	<c:if test="${count > 0}">
+		<c:set var="pageCount"
+			value="${count / pageSize + ( count % pageSize == 0 ? 0 : 1)}" />
+		<c:set var="startPage" value="${pageGroupSize*(nowPageGroup-1)+1}" />
+		<c:set var="endPage" value="${startPage + pageGroupSize-1}" />
+
+		<c:if test="${endPage > pageCount}">
+			<c:set var="endPage" value="${pageCount}" />
+		</c:if>
+
+		<div class="jb-center text-center">
+
+			<ul class="pagination">
+
+				<c:if test="${nowPageGroup > 1}">
+					<li><a href="#;"
+						onclick='paging_script(${(nowPageGroup-2)*pageGroupSize+1 },${pageSize},"boardSearchVO","/list");'><span
+							class="glyphicon glyphicon-chevron-left"></span></a></li>
+				</c:if>
+
+				<c:if test="${nowPageGroup == 1}">
+					<!-- <li class="disabled"><a href="#"><span class="glyphicon glyphicon-chevron-left"></span></a></li> -->
+				</c:if>
+
+				<c:forEach var="i" begin="${startPage}" end="${endPage}">
+					<li <c:if test="${pageIndex == i}"> class="active" </c:if>><a
+						href="#;"
+						onclick='paging_script(${i},${pageSize},"boardSearchVO","/list");'>${i}</a></li>
+				</c:forEach>
+
+				<c:if test="${nowPageGroup < pageGroupCount}">
+
+					<li><a href="#;"
+						onclick='paging_script(${nowPageGroup*pageGroupSize+1},${pageSize},"boardSearchVO","/list");'><span
+							class="glyphicon glyphicon-chevron-right"></span></a></li>
+				</c:if>
+			</ul>
+		</div>
+
+	</c:if>
+	<!-- Pageing : E -->
 </div>
-</body>
+<!-- </div> -->
+	<script type="text/javascript">
+		function paging_script(pageIndex, pageSize, form, url) {
+			/*  alert(pageIndex);
+			 alert(pageSize);
+			 alert(form);
+			 alert(url); */
+			 var form_id = '#'+form;
+			 $(form_id).find("#pageIndex").val(pageIndex);
+			 $(form_id).find("#pageSize").val(pageSize);
+			 $(form_id).attr('action', url).submit();
+			 return false;
+		};
+	</script>
+	</body>
 </html>
- 
+
 </layoutTag:layout>

@@ -11,11 +11,11 @@ import com.example.demo.board.domain.FileVO;
 @Repository("com.example.demo.board.mapper.BoardMapper")
 public interface BoardMapper {
     //게시글 개수  
-    public int boardCount() throws Exception;
+    public int boardCount(BoardVO boardSearchVO) throws Exception;
     
     //게시글 목록  
-    public List<BoardVO> boardList(Map<String, Integer> map) throws Exception;
-    
+    List<BoardVO> boardList(BoardVO boardSearchVO);
+
     //게시글 상세
     public BoardVO boardDetail(int bno) throws Exception;
     
