@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="layoutTag" tagdir="/WEB-INF/tags"%>
+
 <layoutTag:layout>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -9,8 +10,6 @@
 <title>Insert Form</title>
 </head>
 <body>
- 
- 
 <div class="container">
     <div class="col-xs-12" style="margin:15px auto;">
         <label style="font-size:20px;"><span class="glyphicon glyphicon-edit"></span>게시글 작성</label>
@@ -28,7 +27,7 @@
           </div>
           <div class="form-group">
             <label for="content">내용</label>
-            <textarea class="form-control" id="content" name="content" rows="3"></textarea>
+            <textarea id="content" name="content"></textarea>
           </div>
           <div class="form-group">
             <label for="file">파일 업로드</label>
@@ -41,7 +40,14 @@
           </div>
         </form>
     </div>
-</div> 
+</div>
+<script type="text/javascript">
+ClassicEditor
+    .create( document.querySelector( '#content' ) )
+    .catch( error => {
+        console.error( error );
+    } );
+</script>
 </body>
 </html>
 </layoutTag:layout>

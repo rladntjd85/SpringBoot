@@ -4,6 +4,7 @@ public class ListPagingVo {
 	
 		private int startRow;
 		private int endRow;
+		
 	   
 	  /** 현재페이지 */
 	    private int pageIndex = 1;
@@ -12,6 +13,22 @@ public class ListPagingVo {
 	    private int pageSize = 10; //한페이지에 나오는 게시물 개수
 	     
 	    private int pageGroupSize = 10; // 페이지 번호 몇개 보여줄 것인지
+	    
+	    private String searchType;
+		private String keyword;
+		
+		public String getSearchType() {
+			return searchType;
+		}
+		public void setSearchType(String searchType) {
+			this.searchType = searchType;
+		}
+		public String getKeyword() {
+			return keyword;
+		}
+		public void setKeyword(String keyword) {
+			this.keyword = keyword;
+		}
 
 		public int getStartRow() {
 			return startRow;

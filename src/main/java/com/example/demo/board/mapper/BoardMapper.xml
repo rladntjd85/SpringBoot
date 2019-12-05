@@ -7,15 +7,34 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
  
     <select id="boardCount" resultType="int" parameterType="com.example.demo.board.domain.BoardVO">
         SELECT
-            COUNT(*)
+            COUNT(*) as listCnt
         FROM BOARD 
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+
+		<if test="keyword != null and keyword != '' ">
+		
+		<if test="searchType=='subject'">
+
+			AND SUBJECT like CONCAT('%', #{keyword}, '%')
+
+		</if>
+
+		<if test="searchType=='content'">
+
+			AND CONTENT like CONCAT('%', #{keyword}, '%')
+
+		</if>
+
+		<if test="searchType=='writer'">
+
+			AND writer like CONCAT('%', #{keyword}, '%')
+
+		</if>
+		
+		 </if>
+
+	</trim>
     </select>
-    
-    <!-- <select id="boardList" resultType="com.example.demo.board.domain.BoardVO">
-        SELECT
-            *
-        FROM BOARD order by bno desc
-    </select> -->
     
     <select id="boardList" resultType="com.example.demo.board.domain.BoardVO">
     
@@ -25,9 +44,30 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             , content   
             , writer    
             , reg_date   
-        FROM board 
+        FROM BOARD 
  
         <!-- 다른 메서드 호출시 반영되지 않기위해 걸어놓은 조건문 -->
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+
+			<if test="searchType=='subject' and keyword != null and keyword != '' ">
+
+				AND SUBJECT like CONCAT('%', #{keyword}, '%')
+
+			</if>
+
+			<if test="searchType=='content' and keyword != null and keyword != '' ">
+
+				AND CONTENT like CONCAT('%', #{keyword}, '%')
+
+			</if>
+
+			<if test="searchType=='writer' and keyword != null and keyword != '' ">
+
+				AND writer like CONCAT('%', #{keyword}, '%')
+
+			</if>	
+
+		</trim>
         <if test="startRow neq endRow"> 
              ORDER BY bno DESC
             LIMIT #{startRow},#{endRow}

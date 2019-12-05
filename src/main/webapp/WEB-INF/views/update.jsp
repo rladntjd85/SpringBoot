@@ -31,7 +31,13 @@
         </form>
     </div>
 </div>
- 
+ <script type="text/javascript">
+ ClassicEditor
+ .create( document.querySelector( '#content' ) )
+ .catch( error => {
+     console.error( error );
+ } );
+</script>
 </body>
 </html>
 </layoutTag:layout>
